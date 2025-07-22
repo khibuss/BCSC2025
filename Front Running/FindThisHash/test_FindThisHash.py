@@ -8,11 +8,12 @@ from datetime import datetime
 load_dotenv()
 PRIVATE_KEY_HONEST = os.getenv("PRIVATE_KEY_HONEST")
 PRIVATE_KEY_ATTACKER = os.getenv("PRIVATE_KEY_ATTACKER")
-ACCOUNT_HONEST = "0x0C695d7087e72f736FD84B31BC3335532Da23bb0"
-ACCOUNT_ATTACKER = "0xDf3ba104c293020453c8Ebb4fb84CE226b6546E5"
+ACCOUNT_HONEST = os.getenv("PUBLIC_KEY_HONEST")
+ACCOUNT_ATTACKER = os.getenv("PUBLIC_KEY_ATTACKER")
 CONTRACT_NAME = "FindThisHash"
+RPC_URL = os.getenv("RPC_URL")
 
-w3 = Web3(Web3.HTTPProvider("https://sepolia.infura.io/v3/854261bb8677458b9201b8062c8b74ad"))
+w3 = Web3(Web3.HTTPProvider(RPC_URL))
 chain_id = 11155111  # Sepolia
 install_solc("0.8.0")
 
@@ -44,14 +45,14 @@ def compile_contract():
 # Funzione per il deploy del contratto
 def deploy_contract(w3, abi, bytecode, sender, private_key, value_ether=0):
     contract = w3.eth.contract(abi=abi, bytecode=bytecode)
-    nonce = w3.eth.get_transaction_count(sender)
-
+    nonce = w3.eth.get_transaction_count(sender, "pending")
+    print(nonce)
     tx = contract.constructor().build_transaction({
         "from": sender,
         "nonce": nonce,
         "chainId": chain_id,
         "gas": 3000000,
-        "gasPrice": w3.to_wei(0.5, "gwei"),
+        "gasPrice": w3.to_wei(5, "gwei"),
         "value": w3.to_wei(value_ether, "ether")
     })
 
@@ -64,7 +65,7 @@ def deploy_contract(w3, abi, bytecode, sender, private_key, value_ether=0):
 
 # Transazione utente onesto
 def send_honest_tx(contract):
-    nonce = w3.eth.get_transaction_count(ACCOUNT_HONEST)
+    nonce = w3.eth.get_transaction_count(ACCOUNT_HONEST, "pending")
     tx = contract.functions.solve("Ethereum").build_transaction({
         'from': ACCOUNT_HONEST,
         'nonce': nonce,
@@ -78,7 +79,7 @@ def send_honest_tx(contract):
 
 # Transazione attaccante
 def send_attacker_tx(contract):
-    nonce = w3.eth.get_transaction_count(ACCOUNT_ATTACKER)
+    nonce = w3.eth.get_transaction_count(ACCOUNT_ATTACKER, "pending")
     tx = contract.functions.solve("Ethereum").build_transaction({
         'from': ACCOUNT_ATTACKER,
         'nonce': nonce,
