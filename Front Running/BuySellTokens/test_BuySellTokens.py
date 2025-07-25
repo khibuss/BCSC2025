@@ -52,7 +52,7 @@ def deploy_contract(w3, abi, bytecode, sender, private_key, value_ether=0):
         "nonce": nonce,
         "chainId": chain_id,
         "gas": 3000000,
-        "gasPrice": w3.to_wei(1, "gwei"),
+        "gasPrice": w3.to_wei(5, "gwei"),
         "value": w3.to_wei(value_ether, "ether")
     })
 
@@ -69,7 +69,7 @@ def admin_update_price(contract, new_price):
     tx = contract.functions.updatePrice(new_price).build_transaction({
         "from": ACCOUNT_ADMIN,
         "nonce": nonce,
-        "gas": 100000,
+        "gas": 400000,
         "gasPrice": w3.to_wei(0.5, "gwei"), 
     })
     signed = w3.eth.account.sign_transaction(tx, PRIVATE_KEY_ADMIN)
@@ -84,8 +84,8 @@ def attacker_buy(contract):
         "from": ACCOUNT_ATTACKER,
         "value": w3.to_wei(0.001, "ether"),
         "nonce": nonce,
-        "gas": 100000,
-        "gasPrice": w3.to_wei(0.5, "gwei"),
+        "gas": 400000,
+        "gasPrice": w3.to_wei(5, "gwei"),
     })
     signed = w3.eth.account.sign_transaction(tx, PRIVATE_KEY_ATTACKER)
     tx_hash = w3.eth.send_raw_transaction(signed.raw_transaction)
@@ -100,7 +100,7 @@ def attacker_sell(contract, token_amount):
     tx = contract.functions.sell(token_amount).build_transaction({
         "from": ACCOUNT_ATTACKER,
         "nonce": nonce,
-        "gas": 100000,
+        "gas": 300000,
         "gasPrice": w3.to_wei(10, "gwei"),  # Gas price più alto
     })
     signed = w3.eth.account.sign_transaction(tx, PRIVATE_KEY_ATTACKER)
