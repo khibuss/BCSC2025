@@ -8,9 +8,7 @@ from datetime import datetime
 load_dotenv()
 
 PRIVATE_KEY_ADMIN = os.getenv("PRIVATE_KEY_ADMIN")
-PRIVATE_KEY_ATTACKER = os.getenv("PRIVATE_KEY_ATTACKER")
 ACCOUNT_ADMIN = os.getenv("PUBLIC_KEY_ADMIN")
-ACCOUNT_ATTACKER = os.getenv("PUBLIC_KEY_ATTACKER")
 
 # Nomi dei contratti da deployare
 DISPATCHER_CONTRACT_NAME = "TaskDispatcher"
@@ -172,4 +170,4 @@ if __name__ == "__main__":
     print("")
     print("📋 Stato finale dei worker:")
     for idx, worker in enumerate(honest_workers):
-        print(f"Worker {idx+1}:{worker.functions.lastJob().call()}") 
+        print(f"Worker {idx}:{worker.functions.lastJob().call()}") 
